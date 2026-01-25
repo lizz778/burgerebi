@@ -8,7 +8,7 @@
 <meta property="og:image" content="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Burger Junction - Gourmet Burgers & Combos</title>
+    <title>Burger.ge - ბურგერ.ჯი</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,12 +33,13 @@
     </style>
 </head>
 <body class="bg-gray-50">
+    <div id="google_translate_element" style="display:none;">
     <!-- Header & Navigation -->
     <header class="sticky top-0 z-50 shadow-lg bg-white">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center">
                 <i class="fas fa-hamburger text-3xl text-amber-600 mr-2"></i>
-                <h1 class="heading-font text-2xl font-bold text-gray-800">Burger<span class="text-amber-600">Junction</span></h1>
+                <h1 class="heading-font text-2xl font-bold text-gray-800">Burger<span class="text-amber-600">Juniors</span></h1>
             </div>
             
             <!-- Mobile Menu Button -->
@@ -53,6 +54,7 @@
                 <a href="#combos" class="font-semibold text-gray-700 hover:text-amber-600">Combos</a>
                 <a href="#location" class="font-semibold text-gray-700 hover:text-amber-600">Location</a>
                 <a href="#delivery" class="font-semibold text-gray-700 hover:text-amber-600">Delivery</a>
+                 <button onclick="changeLang('ka')" class="font-semibold text-gray-700 hover:text-amber-600">KA</button>
             </nav>
             
             <div class="hidden md:block">
@@ -76,7 +78,7 @@
     <!-- Hero Section -->
     <section id="home" class="burger-bg text-white py-20 md:py-32">
         <div class="container mx-auto px-4 text-center">
-            <h2 class="heading-font text-4xl md:text-6xl font-bold mb-4">Gourmet Burgers <br>Made With <span class="text-amber-400">Passion</span></h2>
+            <h2 class="heading-font text-4xl md:text-6xl font-bold mb-4">Burger Juniors <br>Made With <span class="text-amber-400">Passion</span></h2>
             <p class="text-xl mb-8 max-w-2xl mx-auto">Handcrafted burgers with premium ingredients, fresh buns, and secret sauces that will make your taste buds dance!</p>
             <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
                 <a href="#menu" class="bg-amber-600 text-white font-bold py-3 px-8 rounded-full hover:bg-amber-700 transition duration-300 text-lg">View Menu</a>
@@ -418,6 +420,8 @@
             </div>
         </div>
     </footer>
+    
+    
 
     <!-- Mobile Menu Toggle Script -->
     <script>
@@ -464,6 +468,30 @@
                 }
             });
         });
-    </script>
+    
+    
+
+
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement(
+    {
+      pageLanguage: 'ka',
+      includedLanguages: 'ka,en',
+      autoDisplay: false
+    },
+    'google_translate_element'
+  );
+}
+
+function changeLang(lang) {
+  const select = document.querySelector("select.goog-te-combo");
+  if (!select) return;
+
+  select.value = lang;
+  select.dispatchEvent(new Event("change"));
+}
+</script>
+
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
