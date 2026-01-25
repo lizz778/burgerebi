@@ -33,13 +33,12 @@
     </style>
 </head>
 <body class="bg-gray-50">
-    <div id="google_translate_element" style="display:none;">
     <!-- Header & Navigation -->
     <header class="sticky top-0 z-50 shadow-lg bg-white">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center">
                 <i class="fas fa-hamburger text-3xl text-amber-600 mr-2"></i>
-                <h1 class="heading-font text-2xl font-bold text-gray-800">Burger<span class="text-amber-600">Juniors</span></h1>
+                <h1 class="heading-font text-2xl font-bold text-gray-800">BURGER<span class="text-amber-600">.GE</span></h1>
             </div>
             
             <!-- Mobile Menu Button -->
@@ -54,7 +53,7 @@
                 <a href="#combos" class="font-semibold text-gray-700 hover:text-amber-600">Combos</a>
                 <a href="#location" class="font-semibold text-gray-700 hover:text-amber-600">Location</a>
                 <a href="#delivery" class="font-semibold text-gray-700 hover:text-amber-600">Delivery</a>
-                 <button onclick="changeLang('ka')" class="font-semibold text-gray-700 hover:text-amber-600">KA</button>
+                 <!-- <button class="font-semibold text-gray-700 hover:text-amber-600">Delivery</a> -->
             </nav>
             
             <div class="hidden md:block">
@@ -420,8 +419,6 @@
             </div>
         </div>
     </footer>
-    
-    
 
     <!-- Mobile Menu Toggle Script -->
     <script>
@@ -468,10 +465,10 @@
                 }
             });
         });
-    
-    
+    </script>
+    <div id="google_translate_element" style="display:none;"></div>
 
-
+<script>
 function googleTranslateElementInit() {
   new google.translate.TranslateElement(
     {
@@ -481,14 +478,6 @@ function googleTranslateElementInit() {
     },
     'google_translate_element'
   );
-}
-
-function changeLang(lang) {
-  const select = document.querySelector("select.goog-te-combo");
-  if (!select) return;
-
-  select.value = lang;
-  select.dispatchEvent(new Event("change"));
 }
 </script>
 
