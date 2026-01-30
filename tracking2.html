@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burger Junction - Track Your Order</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        .heading-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        .burger-gradient {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+        }
+        .tracking-bg {
+            background-color: #fff7ed;
+            background-image: radial-gradient(#fdba74 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .tracking-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.15);
+            overflow: hidden;
+            border: 2px solid #fed7aa;
+        }
+        .burger-border {
+            border: 2px solid #fdba74;
+        }
+        .status-active {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(249, 115, 22, 0.4);
+        }
+        .status-completed {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        .status-pending {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+        }
+        .status-upcoming {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .tracking-line {
+            position: relative;
+        }
+        .tracking-line::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #fed7aa;
+            z-index: 1;
+        }
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .burger-loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #fed7aa;
+            border-top: 5px solid #f97316;
+            border-radius: 50%;
+            animation: burger-spin 1s linear infinite;
+        }
+        @keyframes burger-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .map-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #f97316;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+        }
+        .map-marker::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            top: 4px;
+            left: 4px;
+        }
+        .driver-pulse {
+            animation: driver-pulse 2s infinite;
+        }
+        @keyframes driver-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+        }
+        .burger-patty {
+            background: linear-gradient(to bottom, #7c2d12, #9a3412, #7c2d12);
+            border-radius: 10px;
+        }
+        .cheese {
+            background: linear-gradient(to bottom, #f59e0b, #fbbf24, #f59e0b);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="tracking-bg text-gray-800 min-h-screen">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full burger-gradient flex items-center justify-center mr-3">
+                        <i class="fas fa-hamburger text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="heading-font text-2xl text-amber-900">Burger<span class="text-orange-500">Junction</span></h1>
+                        <p class="text-xs text-amber-700">Track Your Order</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="font-semibold text-gray-700 hover:text-orange-600">Home</a>
+                    <a href="menu.html" class="font-semibold text-gray-700 hover:text-orange-600">Menu</a>
+                    <a href="tracking.html" class="font-semibold text-orange-600 border-b-2 border-orange-600">Track Order</a>
+                    <a href="profile.html" class="font-semibold text-gray-700 hover:text-orange-600">My Account</a>
+                </nav>
+                
+                <!-- Actions -->
+                <div class="flex items-center space-x-4">
+                    <button id="new-order" class="burger-gradient text-white font-semibold py-2 px-6 rounded-full hover:opacity-90 transition duration-300">
+                        <i class="fas fa-plus mr-2"></i>New Order
+                    </button>
+                    <button id="mobile-menu" class="md:hidden text-gray-700">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="mb-10 text-center">
+            <h1 class="heading-font text-4xl md:text-5xl text-amber-900 mb-4">Track Your <span class="text-orange-500">Burger Order</span></h1>
+            <p class="text-amber-700 max-w-2xl mx-auto">Follow your delicious burgers from our kitchen to your doorstep in real-time. Your meal is on its way!</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Tracking Info -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Order Status Card -->
+                <div class="tracking-card">
+                    <div class="burger-gradient p-6 text-white">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="heading-font text-2xl flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-3"></i>Order Status
+                                </h2>
+                                <p class="text-amber-200 mt-1">Order #<span id="order-number">BJ8247</span> • Estimated delivery: <span id="delivery-estimate">25-35 minutes</span></p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl font-bold" id="current-status">ON THE WAY</div>
+                                <div class="text-amber-200 text-sm">Last updated: <span id="last-updated">2 min ago</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tracking Timeline -->
+                    <div class="p-6 tracking-line">
+                        <!-- Step 1 -->
+                        <div class="flex items-start mb-10 relative z-10">
+                            <div class="w-12 h-12 rounded-full status-completed flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fas fa-check text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-gray-900 text-lg">Order Confirmed</h3>
+                                    <span class="text-sm text-gray-500">12:05 PM</span>
+                                </div>
+                                <p class="text-gray-600 mt-1">We've received your order and payment. Your burgers are getting ready!</p>
+                                <div class="mt-3 text-sm text-green-600">
+                                    <i class="fas fa-check-circle mr-1"></i> Payment confirmed • Order #BJ8247
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="flex items-start mb-10 relative z-10">
+                            <div class="w-12 h-12 rounded-full status-completed flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fas fa-utensils text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-gray-900 text-lg">Preparing Your Order</h3>
+                                    <span class="text-sm text-gray-500">12:10 PM</span>
+                                </div>
+                                <p class="text-gray-600 mt-1">Our chefs are crafting your delicious burgers with fresh ingredients.</p>
+                                <div class="mt-3">
+                                    <div class="flex items-center text-amber-700">
+                                        <div class="w-full bg-amber-100 rounded-full h-3">
+                                            <div class="bg-green-500 h-3 rounded-full w-full"></div>
+                                        </div>
+                                        <span class="ml-3 text-sm font-bold">Completed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3 (Active) -->
+                        <div class="flex items-start mb-10 relative z-10">
+                            <div class="w-12 h-12 rounded-full status-active flex items-center justify-center mr-6 flex-shrink-0 animate-pulse-slow">
+                                <i class="fas fa-motorcycle text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-gray-900 text-lg">Out for Delivery</h3>
+                                    <span class="text-sm text-gray-500">12:25 PM (Current)</span>
+                                </div>
+                                <p class="text-gray-600 mt-1">Your order is with our delivery driver and on its way to you!</p>
+                                
+                                <!-- Driver Info -->
+                                <div class="mt-4 p-4 bg-amber-50 rounded-xl burger-border">
+                                    <div class="flex items-center">
+                                        <div class="relative mr-4">
+                                            <div class="w-14 h-14 rounded-full bg-amber-200 flex items-center justify-center driver-pulse">
+                                                <i class="fas fa-user text-amber-700 text-2xl"></i>
+                                            </div>
+                                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-check text-white text-xs"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <h4 class="font-bold text-gray-900">Mike Johnson</h4>
+                                                    <p class="text-sm text-gray-600">Your delivery driver</p>
+                                                </div>
+                                                <button id="contact-driver" class="bg-white burger-border text-amber-700 font-semibold py-2 px-4 rounded-lg hover:bg-amber-50 transition duration-300">
+                                                    <i class="fas fa-phone-alt mr-1"></i> Call
+                                                </button>
+                                            </div>
+                                            <div class="mt-2 text-sm text-gray-700">
+                                                <i class="fas fa-car text-orange-500 mr-2"></i> Vehicle: Red Scooter • License: BJ-2023
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Estimated Arrival -->
+                                <div class="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock text-orange-500 text-2xl mr-4"></i>
+                                        <div class="flex-1">
+                                            <div class="font-bold text-gray-900">Estimated Arrival</div>
+                                            <div class="text-2xl font-bold text-orange-600">12:45 - 12:55 PM</div>
+                                            <div class="text-sm text-gray-600">Approximately 15-25 minutes from now</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 4 -->
+                        <div class="flex items-start relative z-10">
+                            <div class="w-12 h-12 rounded-full status-upcoming flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fas fa-home text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-gray-900 text-lg">Order Delivered</h3>
+                                    <span class="text-sm text-gray-500">--:--</span>
+                                </div>
+                                <p class="text-gray-600 mt-1">Your delicious burgers will be delivered to your doorstep.</p>
+                                <div class="mt-3 text-sm text-gray-500">
+                                    <i class="fas fa-info-circle mr-1"></i> We'll notify you when your order arrives
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Details Card -->
+                <div class="tracking-card">
+                    <div class="p-6">
+                        <h2 class="heading-font text-2xl text-amber-900 mb-6">
+                            <i class="fas fa-receipt text-orange-500 mr-3"></i>Order Details
+                        </h2>
+                        
+                        <!-- Order Items -->
+                        <div class="space-y-4 mb-8">
+                            <div class="flex justify-between items-center p-4 bg-amber-50 rounded-xl">
+                                <div class="flex items-center">
+                                    <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+                                        <img src="https://images.unsplash.com/photo-1553979459-d2229ba7433f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" 
+                                             alt="Classic Beef Burger" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Classic Beef Burger</h4>
+                                        <p class="text-sm text-gray-600">Qty: 1 • Medium Spicy</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-gray-900">$12.99</div>
+                                    <div class="text-sm text-gray-500">Item #001</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center p-4 bg-amber-50 rounded-xl">
+                                <div class="flex items-center">
+                                    <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+                                        <img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" 
+                                             alt="BBQ Bacon Burger" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">BBQ Bacon Burger</h4>
+                                        <p class="text-sm text-gray-600">Qty: 2 • Extra Bacon</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-gray-900">$33.98</div>
+                                    <div class="text-sm text-gray-500">Item #002</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center p-4 bg-amber-50 rounded-xl">
+                                <div class="flex items-center">
+                                    <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+                                        <img src="https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" 
+                                             alt="Cheese Fries" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Loaded Cheese Fries</h4>
+                                        <p class="text-sm text-gray-600">Qty: 1 • Extra Cheese</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-gray-900">$7.99</div>
+                                    <div class="text-sm text-gray-500">Side #001</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Order Summary -->
+                        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 mb-6">
+                            <h3 class="font-bold text-gray-900 text-lg mb-4">Order Summary</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700">Subtotal</span>
+                                    <span class="font-medium">$54.96</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700">Delivery Fee</span>
+                                    <span class="font-medium">$2.99</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-700">Tax (8.5%)</span>
+                                    <span class="font-medium">$4.73</span>
+                                </div>
+                                <div class="pt-3 border-t border-amber-300 flex justify-between">
+                                    <span class="text-xl font-bold text-gray-900">Total</span>
+                                    <span class="text-2xl font-bold text-orange-600">$62.68</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Special Instructions -->
+                        <div class="mb-6">
+                            <h4 class="font-bold text-gray-900 mb-2">Special Instructions</h4>
+                            <div class="p-4 bg-amber-50 rounded-xl burger-border">
+                                <p class="text-gray-700" id="special-instructions">Please ring doorbell twice. Leave at front door if no answer.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Order Actions -->
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button id="reorder-btn" class="flex-1 burger-gradient text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition duration-300">
+                                <i class="fas fa-redo mr-2"></i>Reorder This Order
+                            </button>
+                            <button id="help-btn" class="flex-1 bg-white burger-border text-amber-700 font-bold py-3 px-6 rounded-xl hover:bg-amber-50 transition duration-300">
+                                <i class="fas fa-question-circle mr-2"></i>Need Help?
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Map & Delivery Info -->
+            <div class="space-y-8">
+                <!-- Delivery Map Card -->
+                <div class="tracking-card">
+                    <div class="burger-gradient p-6 text-white">
+                        <h2 class="heading-font text-2xl flex items-center">
+                            <i class="fas fa-map-marked-alt mr-3"></i>Live Delivery Map
+                        </h2>
+                        <p class="text-amber-200 mt-1">Tracking your delivery in real-time</p>
+                    </div>
+                    
+                    <div class="p-6">
+                        <!-- Map Visualization -->
+                        <div class="relative h-64 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl overflow-hidden mb-6">
+                            <!-- Map Grid -->
+                            <div class="absolute inset-0 opacity-20">
+                                <div class="h-full w-full" style="background-image: linear-gradient(to right, #92400e 1px, transparent 1px), linear-gradient(to bottom, #92400e 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            </div>
+                            
+                            <!-- Restaurant Marker -->
+                            <div class="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2">
+                                <div class="w-12 h-12 rounded-full bg-white border-4 border-orange-500 flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-hamburger text-orange-500 text-xl"></i>
+                                </div>
+                                <div class="text-center mt-2 text-sm font-semibold text-amber-900">Burger Junction</div>
+                            </div>
+                            
+                            <!-- Delivery Route -->
+                            <div class="absolute top-1/4 left-1/4 w-1/2 h-1 border-t-4 border-dashed border-orange-400" style="transform: rotate(30deg); transform-origin: left center;"></div>
+                            
+                            <!-- Driver Marker -->
+                            <div id="driver-marker" class="map-marker" style="top: 60%; left: 70%;">
+                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-xs font-bold text-amber-900 bg-white px-2 py-1 rounded shadow-lg">
+                                    Driver Mike
+                                </div>
+                            </div>
+                            
+                            <!-- Destination Marker -->
+                            <div class="absolute bottom-1/4 right-1/4 transform translate-x-1/2 translate-y-1/2">
+                                <div class="w-12 h-12 rounded-full bg-white border-4 border-green-500 flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-home text-green-500 text-xl"></i>
+                                </div>
+                                <div class="text-center mt-2 text-sm font-semibold text-amber-900">Your Location</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Distance & Time -->
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-amber-50 p-4 rounded-xl text-center">
+                                <div class="text-3xl font-bold text-amber-900" id="distance-away">1.2</div>
+                                <div class="text-sm text-amber-700">Miles Away</div>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded-xl text-center">
+                                <div class="text-3xl font-bold text-orange-900" id="time-away">12</div>
+                                <div class="text-sm text-orange-700">Minutes Away</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Live Updates -->
+                        <div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mr-4">
+                                    <i class="fas fa-satellite-dish text-orange-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-bold text-gray-900">Live Tracking Active</div>
+                                    <div class="text-sm text-gray-600">Location updates every 30 seconds</div>
+                                </div>
+                                <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Delivery Information -->
+                <div class="tracking-card">
+                    <div class="p-6">
+                        <h2 class="heading-font text-2xl text-amber-900 mb-6">
+                            <i class="fas fa-info-circle text-orange-500 mr-3"></i>Delivery Information
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="font-bold text-gray-900 mb-2">Delivery Address</h3>
+                                <div class="p-4 bg-amber-50 rounded-xl">
+                                    <p class="text-gray-700" id="delivery-address">123 Burger Street, Apt 4B<br>New York, NY 10001</p>
+                                    <button id="edit-address" class="text-orange-600 hover:text-orange-700 text-sm font-medium mt-2">
+                                        <i class="fas fa-edit mr-1"></i> Edit Address
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="font-bold text-gray-900 mb-2">Contact Information</h3>
+                                <div class="p-4 bg-amber-50 rounded-xl">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div>
+                                            <div class="font-medium text-gray-900" id="customer-name">John BurgerLover</div>
+                                            <div class="text-gray-700" id="customer-phone">(555) 123-4567</div>
+                                        </div>
+                                        <button id="contact-support" class="bg-white burger-border text-amber-700 font-semibold py-2 px-4 rounded-lg hover:bg-amber-50 transition duration-300">
+                                            <i class="fas fa-headset mr-1"></i> Support
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="font-bold text-gray-900 mb-2">Delivery Preferences</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mr-4">
+                                            <i class="fas fa-door-closed text-amber-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Leave at Door</div>
+                                            <div class="text-sm text-gray-600">Contact-free delivery selected</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mr-4">
+                                            <i class="fas fa-bell text-amber-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Ring Doorbell</div>
+                                            <div class="text-sm text-gray-600">Ring twice upon arrival</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Estimated Arrival Card -->
+                <div class="tracking-card bg-gradient-to-br from-amber-500 to-orange-600 text-white">
+                    <div class="p-6">
+                        <h3 class="font-bold text-2xl mb-4">Estimated Arrival</h3>
+                        <div class="flex items-center mb-6">
+                            <i class="fas fa-clock text-3xl mr-4"></i>
+                            <div>
+                                <div class="text-4xl font-bold" id="arrival-time">12:45 PM</div>
+                                <div class="text-amber-200">Approximately <span id="arrival-minutes">15</span> minutes</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Burger Progress Visualization -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="text-sm">Order Placed</div>
+                                <div class="text-sm">Delivered</div>
+                            </div>
+                            <div class="h-3 bg-amber-400/30 rounded-full overflow-hidden">
+                                <div class="h-full w-3/4 bg-gradient-to-r from-white to-amber-200 rounded-full"></div>
+                            </div>
+                            <div class="flex justify-between mt-1 text-xs">
+                                <span>12:05 PM</span>
+                                <span>12:45 PM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="text-amber-200 mb-4">Your delicious burgers are almost there!</p>
+                            <div class="flex justify-center space-x-2">
+                                <div class="w-4 h-4 rounded-full burger-patty"></div>
+                                <div class="w-4 h-4 rounded-full cheese"></div>
+                                <div class="w-4 h-4 rounded-full burger-patty"></div>
+                                <div class="w-4 h-4 rounded-full cheese"></div>
+                                <div class="w-4 h-4 rounded-full burger-patty animate-pulse-slow"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Order Delivered Modal -->
+    <div id="delivered-modal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden">
+            <div class="burger-gradient p-8 text-center">
+                <div class="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-check text-white text-5xl"></i>
+                </div>
+                <h2 class="heading-font text-3xl font-bold text-white mb-2">Order Delivered!</h2>
+                <p class="text-amber-200">Hope you enjoy your burgers!</p>
+            </div>
+            
+            <div class="p-8 text-center">
+                <div class="mb-6">
+                    <h3 class="font-bold text-gray-900 text-xl mb-2">Order #<span id="delivered-order-id">BJ8247</span></h3>
+                    <p class="text-gray-600">Delivered at <span class="font-bold text-green-600" id="delivered-time">12:48 PM</span></p>
+                </div>
+                
+                <div class="bg-amber-50 rounded-xl p-6 mb-8 burger-border">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-amber-900 font-bold">Total Paid</span>
+                        <span class="text-2xl font-bold text-amber-900">$62.68</span>
+                    </div>
+                    <div class="text-sm text-amber-700">
+                        <p>Your order has been successfully delivered to your doorstep.</p>
+                        <p class="mt-2">Please rate your delivery experience!</p>
+                    </div>
+                </div>
+                
+                <!-- Rating Stars -->
+                <div class="mb-8">
+                    <div class="text-amber-900 font-bold mb-4">Rate Your Order</div>
+                    <div class="flex justify-center space-x-2 mb-2">
+                        <i class="fas fa-star text-3xl text-amber-300 hover:text-amber-500 cursor-pointer rating-star" data-rating="1"></i>
+                        <i class="fas fa-star text-3xl text-amber-300 hover:text-amber-500 cursor-pointer rating-star" data-rating="2"></i>
+                        <i class="fas fa-star text-3xl text-amber-300 hover:text-amber-500 cursor-pointer rating-star" data-rating="3"></i>
+                        <i class="fas fa-star text-3xl text-amber-300 hover:text-amber-500 cursor-pointer rating-star" data-rating="4"></i>
+                        <i class="fas fa-star text-3xl text-amber-300 hover:text-amber-500 cursor-pointer rating-star" data-rating="5"></i>
+                    </div>
+                    <div class="text-sm text-gray-600" id="rating-text">Tap to rate</div>
+                </div>
+                
+                <div class="space-y-4">
+                    <button id="rate-order" class="w-full burger-gradient text-white font-bold py-3 px-6 rounded-xl hover:opacity-95 transition duration-300">
+                        <i class="fas fa-star mr-2"></i>Submit Rating
+                    </button>
+                    <button id="close-delivered-modal" class="w-full bg-white burger-border text-amber-700 font-bold py-3 px-6 rounded-xl hover:bg-amber-50 transition duration-300">
+                        Back to Tracking
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black/70 z-50 hidden items-center justify-center">
+        <div class="text-center">
+            <div class="burger-loader mx-auto mb-6"></div>
+            <h3 class="text-2xl font-bold text-white mb-2">Updating Tracking Info</h3>
+            <p class="text-amber-200">Getting the latest location of your order...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-amber-900 text-amber-100 mt-16">
+        <div class="container mx-auto px-4 py-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="w-12 h-12 rounded-full bg-amber-700 flex items-center justify-center mr-3">
+                        <i class="fas fa-hamburger text-amber-300 text-2xl"></i>
+                    </div>
+                    <h2 class="heading-font text-2xl">Burger<span class="text-amber-300">Junction</span></h2>
+                </div>
+                <p class="text-amber-300 mb-6 max-w-2xl mx-auto">Track your delicious burgers from our kitchen to your doorstep. Fresh ingredients, fast delivery, and real-time tracking.</p>
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="#" class="text-amber-300 hover:text-white">
+                        <i class="fab fa-facebook text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-amber-300 hover:text-white">
+                        <i class="fab fa-instagram text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-amber-300 hover:text-white">
+                        <i class="fab fa-twitter text-2xl"></i>
+                    </a>
+                </div>
+                <p class="text-amber-400 text-sm">© 2023 Burger Junction. All rights reserved. • Need help? Call (555) 123-4567</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const newOrderBtn = document.getElementById('new-order');
+        const contactDriverBtn = document.getElementById('contact-driver');
+        const reorderBtn = document.getElementById('reorder-btn');
+        const helpBtn = document.getElementById('help-btn');
+        const editAddressBtn = document.getElementById('edit-address');
+        const contactSupportBtn = document.getElementById('contact-support');
+        const deliveredModal = document.getElementById('delivered-modal');
+        const closeDeliveredModalBtn = document.getElementById('close-delivered-modal');
+        const rateOrderBtn = document.getElementById('rate-order');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const ratingStars = document.querySelectorAll('.rating-star');
+        const driverMarker = document.getElementById('driver-marker');
+        
+        // Order data
+        let orderStatus = 'on_the_way'; // 'preparing', 'on_the_way', 'delivered'
+        let currentRating = 0;
+        let driverPosition = 70; // Percentage from restaurant to destination
+        let updateInterval;
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current time for delivery estimate
+            const now = new Date();
+            const deliveryTime = new Date(now.getTime() + 20 * 60000); // 20 minutes from now
+            
+            const options = { hour: 'numeric', minute: '2-digit', hour12: true };
+            const deliveryTimeString = deliveryTime.toLocaleTimeString('en-US', options);
+            
+            document.getElementById('arrival-time').textContent = deliveryTimeString;
+            document.getElementById('delivered-time').textContent = deliveryTimeString;
+            
+            // Start live tracking simulation
+            startLiveTracking();
+            
+            // Check if order should be marked as delivered (for demo purposes)
+            // In a real app, this would come from your backend
+            setTimeout(() => {
+                // After 10 seconds, show delivered modal (for demo)
+                // In production, you would check actual delivery status
+                // deliveredModal.classList.remove('hidden');
+                // deliveredModal.classList.add('flex');
+            }, 10000);
+        });
+        
+        // Live tracking simulation
+        function startLiveTracking() {
+            let distance = 1.2;
+            let time = 12;
+            let position = 70;
+            
+            updateInterval = setInterval(() => {
+                // Update distance and time
+                if (distance > 0.1) {
+                    distance -= 0.05;
+                    time -= 0.5;
+                    position -= 2;
+                    
+                    // Update display
+                    document.getElementById('distance-away').textContent = distance.toFixed(1);
+                    document.getElementById('time-away').textContent = Math.max(0, Math.round(time));
+                    document.getElementById('arrival-minutes').textContent = Math.max(0, Math.round(time));
+                    
+                    // Update driver position on map
+                    if (driverMarker) {
+                        driverMarker.style.left = `${position}%`;
+                    }
+                    
+                    // If we've arrived, show delivered modal
+                    if (distance <= 0.1 && orderStatus !== 'delivered') {
+                        orderStatus = 'delivered';
+                        clearInterval(updateInterval);
+                        
+                        // Update UI to show delivered status
+                        document.getElementById('current-status').textContent = 'DELIVERED';
+                        document.getElementById('current-status').classList.remove('text-orange-600');
+                        document.getElementById('current-status').classList.add('text-green-600');
+                        
+                        // Update timeline
+                        const timelineStatus = document.querySelectorAll('.status-active');
+                        timelineStatus.forEach(el => {
+                            el.classList.remove('status-active', 'animate-pulse-slow');
+                            el.classList.add('status-completed');
+                        });
+                        
+                        // Show delivered modal after a short delay
+                        setTimeout(() => {
+                            deliveredModal.classList.remove('hidden');
+                            deliveredModal.classList.add('flex');
+                        }, 2000);
+                    }
+                }
+            }, 3000); // Update every 3 seconds
+        }
+        
+        // Rating stars
+        ratingStars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                currentRating = rating;
+                
+                // Update star display
+                ratingStars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.remove('text-amber-300');
+                        s.classList.add('text-amber-500');
+                    } else {
+                        s.classList.remove('text-amber-500');
+                        s.classList.add('text-amber-300');
+                    }
+                });
+                
+                // Update rating text
+                const ratingText = document.getElementById('rating-text');
+                const texts = [
+                    'Poor',
+                    'Fair',
+                    'Good',
+                    'Very Good',
+                    'Excellent'
+                ];
+                ratingText.textContent = texts[rating - 1] || 'Tap to rate';
+            });
+        });
+        
+        // Button event handlers
+        newOrderBtn.addEventListener('click', function() {
+            // In a real app, this would navigate to the menu
+            alert('Opening menu to place a new order...');
+        });
+        
+        contactDriverBtn.addEventListener('click', function() {
+            // Simulate calling driver
+            alert('Calling your delivery driver Mike...\n\nIn a real app, this would initiate a call.');
+        });
+        
+        reorderBtn.addEventListener('click', function() {
+            // Simulate reordering
+            loadingOverlay.classList.remove('hidden');
+            loadingOverlay.classList.add('flex');
+            
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                loadingOverlay.classList.remove('flex');
+                alert('Your previous order has been added to cart! Redirecting to checkout...');
+            }, 1500);
+        });
+        
+        helpBtn.addEventListener('click', function() {
+            // Show help options
+            const helpOptions = [
+                'Order is late',
+                'Wrong order received',
+                'Missing items',
+                'Driver can\'t find address',
+                'Other issue'
+            ];
+            
+            const selected = prompt(`What do you need help with?\n\n${helpOptions.map((opt, i) => `${i+1}. ${opt}`).join('\n')}\n\nEnter option number:`, '1');
+            
+            if (selected) {
+                alert(`Thank you for reporting: "${helpOptions[selected-1] || helpOptions[0]}". Our support team will contact you shortly.`);
+            }
+        });
+        
+        editAddressBtn.addEventListener('click', function() {
+            const newAddress = prompt('Enter new delivery address:', '123 Burger Street, Apt 4B\nNew York, NY 10001');
+            if (newAddress) {
+                document.getElementById('delivery-address').textContent = newAddress;
+                alert('Delivery address updated successfully!');
+            }
+        });
+        
+        contactSupportBtn.addEventListener('click', function() {
+            // In a real app, this would initiate a chat or call
+            alert('Connecting you with Burger Junction support...\n\nSupport hours: 10AM - 11PM daily\nPhone: (555) 123-4567');
+        });
+        
+        // Modal controls
+        closeDeliveredModalBtn.addEventListener('click', function() {
+            deliveredModal.classList.add('hidden');
+            deliveredModal.classList.remove('flex');
+        });
+        
+        rateOrderBtn.addEventListener('click', function() {
+            if (currentRating === 0) {
+                alert('Please select a rating before submitting.');
+                return;
+            }
+            
+            loadingOverlay.classList.remove('hidden');
+            loadingOverlay.classList.add('flex');
+            
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                loadingOverlay.classList.remove('flex');
+                deliveredModal.classList.add('hidden');
+                deliveredModal.classList.remove('flex');
+                
+                alert(`Thank you for your ${currentRating}-star rating! Your feedback helps us improve.`);
+                
+                // Reset stars for next time
+                ratingStars.forEach(star => {
+                    star.classList.remove('text-amber-500');
+                    star.classList.add('text-amber-300');
+                });
+                document.getElementById('rating-text').textContent = 'Tap to rate';
+                currentRating = 0;
+            }, 1500);
+        });
+        
+        // Mobile menu toggle
+        document.getElementById('mobile-menu').addEventListener('click', function() {
+            const nav = document.querySelector('nav.hidden');
+            if (nav) {
+                nav.classList.toggle('hidden');
+                nav.classList.toggle('flex');
+                nav.classList.toggle('flex-col');
+                nav.classList.toggle('absolute');
+                nav.classList.toggle('top-16');
+                nav.classList.toggle('right-4');
+                nav.classList.toggle('bg-white');
+                nav.classList.toggle('p-4');
+                nav.classList.toggle('rounded-lg');
+                nav.classList.toggle('shadow-xl');
+                nav.classList.toggle('z-50');
+            }
+        });
+        
+        // Simulate loading updates
+        function simulateUpdate() {
+            const lastUpdated = document.getElementById('last-updated');
+            let seconds = 0;
+            
+            setInterval(() => {
+                seconds += 30;
+                if (seconds < 60) {
+                    lastUpdated.textContent = `${seconds} sec ago`;
+                } else if (seconds < 120) {
+                    lastUpdated.textContent = '1 min ago';
+                } else {
+                    lastUpdated.textContent = '2 min ago';
+                }
+            }, 30000); // Update every 30 seconds
+        }
+        
+        // Start update simulation
+        simulateUpdate();
+        
+        // Auto-refresh page after 5 minutes (simulate checking for updates)
+        setTimeout(() => {
+            if (orderStatus !== 'delivered') {
+                if (confirm('Would you like to refresh for the latest tracking information?')) {
+                    location.reload();
+                }
+            }
+        }, 300000); // 5 minutes
+    </script>
+</body>
+</html>

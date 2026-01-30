@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Burger Junction - Checkout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Fredoka+One&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .heading-font {
+      font-family: 'Fredoka One', cursive;
+    }
+
+    .burger-gradient {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+    }
+
+    .burger-bg {
+      background-color: #fff7ed;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23fdba74' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
+    }
+
+    .checkout-card {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(249, 115, 22, 0.15);
+      overflow: hidden;
+      border: 1px solid #fed7aa;
+    }
+
+    .burger-border {
+      border: 2px solid #fdba74;
+    }
+
+    .input-focus:focus {
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
+      border-color: #f97316;
+    }
+
+    .order-step {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .order-step::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: #f97316;
+    }
+
+    .burger-loader {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #fed7aa;
+      border-top: 5px solid #f97316;
+      border-radius: 50%;
+      animation: burger-spin 1s linear infinite;
+    }
+
+    @keyframes burger-spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .sesame-seed {
+      position: absolute;
+      width: 8px;
+      height: 4px;
+      background: #fef3c7;
+      border-radius: 50%;
+      transform: rotate(45deg);
+    }
+
+    .animate-bounce-slow {
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .burger-patty {
+      background: linear-gradient(to bottom, #7c2d12, #9a3412, #7c2d12);
+      border-radius: 10px;
+    }
+
+    .lettuce {
+      background: linear-gradient(to bottom, #16a34a, #22c55e, #16a34a);
+      border-radius: 5px;
+    }
+
+    .cheese {
+      background: linear-gradient(to bottom, #f59e0b, #fbbf24, #f59e0b);
+      border-radius: 8px;
+    }
+
+    .tomato {
+      background: linear-gradient(to bottom, #dc2626, #ef4444, #dc2626);
+      border-radius: 6px;
+    }
+  </style>
+</head>
+
+<body class="burger-bg text-gray-800 min-h-screen">
+  <!-- Burger Bun Top Decoration -->
+  <div class="absolute top-0 left-0 right-0 h-20 overflow-hidden z-0">
+    <div class="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-amber-900 to-amber-800 rounded-b-3xl"></div>
+    <!-- Sesame seeds -->
+    <div class="sesame-seed top-4 left-1/4"></div>
+    <div class="sesame-seed top-6 left-1/3"></div>
+    <div class="sesame-seed top-8 left-1/2"></div>
+    <div class="sesame-seed top-5 right-1/4"></div>
+    <div class="sesame-seed top-7 right-1/3"></div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container mx-auto px-4 py-8 relative z-10">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-10 pt-8">
+      <div class="flex items-center mb-6 md:mb-0">
+        <div class="relative">
+          <div class="w-16 h-16 rounded-full burger-gradient flex items-center justify-center mr-4 shadow-lg">
+            <i class="fas fa-hamburger text-white text-3xl"></i>
+            <div class="absolute -top-1 -right-1 w-6 h-6 bg-amber-300 rounded-full flex items-center justify-center">
+              <i class="fas fa-shopping-cart text-amber-900 text-xs"></i>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h1 class="heading-font text-4xl text-amber-900">BURGER<span class="text-orange-500">.GE</span></h1>
+          <p class="text-amber-700 font-medium">მიიღე შენი შეკვეთა!</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <div class="hidden md:block text-right">
+          <div class="text-sm text-amber-700">Need help?</div>
+          <div class="font-bold text-amber-900"><i class="fas fa-phone-alt mr-2"></i> (555) 123-4567</div>
+        </div>
+        <a href="#" id="back-to-menu"
+          class="bg-white burger-border text-amber-700 font-bold py-3 px-6 rounded-full hover:bg-amber-50 transition duration-300 shadow-md">
+          <i class="fas fa-arrow-left mr-2"></i>Back to Menu
+        </a>
+      </div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="mb-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="flex items-center">
+          <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold mr-4">1
+          </div>
+          <div>
+            <div class="text-sm text-amber-700">Step 1</div>
+            <div class="font-bold text-amber-900">Your Order</div>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold mr-4">2
+          </div>
+          <div>
+            <div class="text-sm text-amber-700">Step 2</div>
+            <div class="font-bold text-amber-900">Delivery Info</div>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div
+            class="w-10 h-10 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center font-bold mr-4">3
+          </div>
+          <div>
+            <div class="text-sm text-amber-700">Step 3</div>
+            <div class="font-bold text-amber-900">გადახდის მეთოდი</div>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div
+            class="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold mr-4">4
+          </div>
+          <div>
+            <div class="text-sm text-amber-700">Step 4</div>
+            <div class="font-bold text-amber-900">დადასტურება</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 h-2 bg-amber-100 rounded-full overflow-hidden">
+        <div class="h-full w-3/4 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column - Order Summary -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Order Summary Card -->
+        <div class="checkout-card order-step">
+          <div class="p-6">
+            <div class="flex justify-between items-center mb-8">
+              <h2 class="heading-font text-2xl text-amber-900">
+                <i class="fas fa-clipboard-list mr-3 text-orange-500"></i>შენი ბურგერების შეკვეთა
+              </h2>
+              <div class="text-right">
+                <div class="text-sm text-amber-700">Order #<span id="order-id" class="font-bold">BJ8247</span></div>
+                <div class="text-xs text-amber-600">Placed just now</div>
+              </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="space-y-6 mb-8">
+              <!-- Item 1 -->
+              <div class="flex items-start p-4 bg-amber-50 rounded-xl burger-border">
+                <div class="w-20 h-20 rounded-lg overflow-hidden mr-4 flex-shrink-0">
+                  <img
+                    src="https://images.unsplash.com/photo-1553979459-d2229ba7433f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
+                    alt="Classic Beef Burger" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <h3 class="font-bold text-amber-900 text-lg">კლასიკური საქონლის ბურგერი</h3>
+                      <p class="text-amber-700 text-sm">Beef patty, lettuce, tomato, cheese, special sauce</p>
+                    </div>
+                    <div class="text-right">
+                      <div class="font-bold text-amber-900 text-lg">$12.99</div>
+                      <div class="text-sm text-amber-700">Item #001</div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center mt-4">
+                    <div class="flex items-center">
+                      <button
+                        class="w-8 h-8 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center hover:bg-amber-300">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <span class="mx-3 font-bold text-amber-900">1</span>
+                      <button
+                        class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                      <button class="ml-4 text-amber-600 hover:text-orange-600">
+                        <i class="fas fa-trash-alt mr-1"></i> Remove
+                      </button>
+                    </div>
+                    <div class="text-amber-700">
+                      <i class="fas fa-pepper-hot text-orange-500 mr-1"></i> საშუალოდ ცხარე
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="flex items-start p-4 bg-amber-50 rounded-xl burger-border">
+                <div class="w-20 h-20 rounded-lg overflow-hidden mr-4 flex-shrink-0">
+                  <img
+                    src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
+                    alt="BBQ Bacon Burger" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <h3 class="font-bold text-amber-900 text-lg">BBQ ბეკონის ბურგერი</h3>
+                      <p class="text-amber-700 text-sm">Double beef, bacon, BBQ sauce, onion rings</p>
+                    </div>
+                    <div class="text-right">
+                      <div class="font-bold text-amber-900 text-lg">$16.99</div>
+                      <div class="text-sm text-amber-700">Item #002</div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center mt-4">
+                    <div class="flex items-center">
+                      <button
+                        class="w-8 h-8 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center hover:bg-amber-300">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <span class="mx-3 font-bold text-amber-900">2</span>
+                      <button
+                        class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                      <button class="ml-4 text-amber-600 hover:text-orange-600">
+                        <i class="fas fa-edit mr-1"></i> Customize
+                      </button>
+                    </div>
+                    <div class="text-amber-700">
+                      <i class="fas fa-bacon text-orange-500 mr-1"></i> Extra ბეკონი
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="flex items-start p-4 bg-amber-50 rounded-xl burger-border">
+                <div class="w-20 h-20 rounded-lg overflow-hidden mr-4 flex-shrink-0">
+                  <img
+                    src="https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
+                    alt="Cheese Fries" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <h3 class="font-bold text-amber-900 text-lg">Loaded Cheese Fries</h3>
+                      <p class="text-amber-700 text-sm">Crispy fries with melted cheese & bacon bits</p>
+                    </div>
+                    <div class="text-right">
+                      <div class="font-bold text-amber-900 text-lg">9.99 ₾</div>
+                      <div class="text-sm text-amber-700">Side #001</div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center mt-4">
+                    <div class="flex items-center">
+                      <button
+                        class="w-8 h-8 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center hover:bg-amber-300">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <span class="mx-3 font-bold text-amber-900">1</span>
+                      <button
+                        class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                    <div class="text-amber-700">
+                      <i class="fas fa-cheese text-amber-400 mr-1"></i> Extra Cheese
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Notes -->
+            <div class="mb-8">
+              <label class="block font-bold text-amber-900 mb-3">
+                <i class="fas fa-sticky-note text-orange-500 mr-2"></i>Special Instructions
+              </label>
+              <textarea id="order-notes"
+                class="w-full p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50"
+                rows="3" placeholder="Any special requests? Allergies? Extra sauce? Let us know!"></textarea>
+            </div>
+
+            <!-- Add More Items -->
+            <div class="text-center">
+              <button id="add-more-items"
+                class="bg-white burger-border text-amber-700 font-bold py-3 px-8 rounded-full hover:bg-amber-50 transition duration-300">
+                <i class="fas fa-plus-circle mr-2"></i>Add More Burgers & Sides
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery Information Card -->
+        <div class="checkout-card order-step">
+          <div class="p-6">
+            <h2 class="heading-font text-2xl text-amber-900 mb-6">
+              <i class="fas fa-truck text-orange-500 mr-3"></i>Delivery Information
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-amber-900 font-bold mb-2">First Name *</label>
+                <input type="text" id="first-name" required
+                  class="w-full p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50"
+                  placeholder="John">
+              </div>
+              <div>
+                <label class="block text-amber-900 font-bold mb-2">Last Name *</label>
+                <input type="text" id="last-name" required
+                  class="w-full p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50"
+                  placeholder="BurgerLover">
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <label class="block text-amber-900 font-bold mb-2">Email Address *</label>
+              <input type="email" id="email" required
+                class="w-full p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50"
+                placeholder="john@example.com">
+            </div>
+
+            <div class="mt-6">
+              <label class="block text-amber-900 font-bold mb-2">Phone Number *</label>
+              <input type="tel" id="phone" required
+                class="w-full p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50"
+                placeholder="(555) 123-4567">
+            </div>
+
+            <div class="mt-6">
+              <label class="block text-amber-900 font-bold mb-2">Delivery Address *</label>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <input type="text" id="street" required placeholder="Street Address"
+                  class="p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50">
+                <input type="text" id="apt" placeholder="Apt/Suite/Floor"
+                  class="p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50">
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" id="city" required placeholder="City"
+                  class="p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50">
+                <input type="text" id="state" required placeholder="State"
+                  class="p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50">
+                <input type="text" id="zip" required placeholder="ZIP Code"
+                  class="p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50">
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <label class="block text-amber-900 font-bold mb-2">Delivery Instructions</label>
+              <textarea id="delivery-instructions" rows="2"
+                class="w-full p-4 border-2 border-amber-200 rounded-xl input-focus focus:outline-none focus:border-orange-400 bg-amber-50"
+                placeholder="Building code, gate instructions, or anything else we should know"></textarea>
+            </div>
+
+            <div class="mt-8 flex items-center justify-between">
+              <div class="flex items-center">
+                <i class="fas fa-clock text-orange-500 text-2xl mr-3"></i>
+                <div>
+                  <div class="font-bold text-amber-900">Estimated Delivery Time</div>
+                  <div class="text-amber-700" id="delivery-time">30-45 minutes</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="font-bold text-amber-900">Delivery Fee</div>
+                <div class="text-2xl font-bold text-orange-500">$2.99</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Order Summary & Payment -->
+      <div class="space-y-8">
+        <!-- Order Totals Card -->
+        <div class="checkout-card sticky top-8">
+          <div class="burger-gradient p-6 text-white">
+            <h2 class="heading-font text-2xl flex items-center">
+              <i class="fas fa-receipt mr-3"></i>Order Summary
+            </h2>
+            <div class="flex justify-between items-center mt-2">
+              <span class="text-amber-200">Items: 4</span>
+              <span class="text-amber-200">Est. Total</span>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <!-- Burger Visualization -->
+            <div class="mb-8">
+              <div class="text-center mb-4">
+                <div class="text-amber-900 font-bold mb-2">Your Burger Stack</div>
+                <div class="text-sm text-amber-700">Visualizing your delicious order</div>
+              </div>
+              <div class="flex flex-col items-center">
+                <!-- Burger Visualization -->
+                <div class="w-32 h-32 relative">
+                  <!-- Top bun -->
+                  <div class="w-32 h-6 bg-amber-400 rounded-t-full mb-1"></div>
+                  <!-- Sesame seeds -->
+                  <div class="sesame-seed top-2 left-8"></div>
+                  <div class="sesame-seed top-1 left-12"></div>
+                  <div class="sesame-seed top-3 right-10"></div>
+                  <!-- Tomato -->
+                  <div class="tomato w-28 h-3 mx-auto mb-1"></div>
+                  <!-- Lettuce -->
+                  <div class="lettuce w-30 h-3 mx-auto mb-1"></div>
+                  <!-- Cheese -->
+                  <div class="cheese w-28 h-4 mx-auto mb-1"></div>
+                  <!-- Patty -->
+                  <div class="burger-patty w-32 h-6 mx-auto mb-1"></div>
+                  <!-- Bottom bun -->
+                  <div class="w-32 h-8 bg-amber-300 rounded-b-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Breakdown -->
+            <div class="space-y-3 mb-6">
+              <div class="flex justify-between">
+                <span class="text-amber-700">Classic Beef Burger</span>
+                <span class="font-medium">$12.99</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-amber-700">BBQ Bacon Burger (x2)</span>
+                <span class="font-medium">$33.98</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-amber-700">Loaded Cheese Fries</span>
+                <span class="font-medium">$7.99</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-amber-700">Delivery Fee</span>
+                <span class="font-medium">$2.99</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-amber-700">Tax (8.5%)</span>
+                <span class="font-medium">$4.73</span>
+              </div>
+              <div class="pt-4 border-t-2 border-amber-200 flex justify-between">
+                <span class="text-xl font-bold text-amber-900">Total</span>
+                <span class="text-2xl font-bold text-orange-600">$62.68</span>
+              </div>
+            </div>
+
+            <!-- Promo Code -->
+            <div class="mb-6">
+              <label class="block text-amber-900 font-bold mb-2">
+                <i class="fas fa-tag text-orange-500 mr-2"></i>Promo Code
+              </label>
+              <div class="flex">
+                <input type="text" id="promo-code" placeholder="Enter code"
+                  class="flex-1 p-3 border-2 border-amber-200 rounded-l-xl focus:outline-none focus:border-orange-400 bg-amber-50">
+                <button id="apply-promo"
+                  class="bg-amber-700 text-white font-bold px-6 rounded-r-xl hover:bg-amber-800 transition duration-300">
+                  Apply
+                </button>
+              </div>
+              <div id="promo-message" class="mt-2 text-sm"></div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="mb-8">
+              <label class="block text-amber-900 font-bold mb-3">
+                <i class="fas fa-credit-card text-orange-500 mr-2"></i>Payment Method
+              </label>
+              <div class="space-y-3">
+                <div class="flex items-center p-3 bg-amber-50 rounded-xl border-2 border-amber-200">
+                  <input type="radio" id="credit-card" name="payment" checked
+                    class="h-5 w-5 text-orange-600 focus:ring-orange-500">
+                  <label for="credit-card" class="ml-3 flex items-center w-full">
+                    <i class="fas fa-credit-card text-amber-700 text-xl mr-3"></i>
+                    <span class="font-medium text-amber-900">Credit/Debit Card</span>
+                  </label>
+                </div>
+
+                <div class="flex items-center p-3 bg-amber-50 rounded-xl border-2 border-amber-200">
+                  <input type="radio" id="paypal" name="payment" class="h-5 w-5 text-orange-600 focus:ring-orange-500">
+                  <label for="paypal" class="ml-3 flex items-center w-full">
+                    <i class="fab fa-paypal text-blue-500 text-xl mr-3"></i>
+                    <span class="font-medium text-amber-900">PayPal</span>
+                  </label>
+                </div>
+
+                <div class="flex items-center p-3 bg-amber-50 rounded-xl border-2 border-amber-200">
+                  <input type="radio" id="cash" name="payment" class="h-5 w-5 text-orange-600 focus:ring-orange-500">
+                  <label for="cash" class="ml-3 flex items-center w-full">
+                    <i class="fas fa-money-bill-wave text-green-500 text-xl mr-3"></i>
+                    <span class="font-medium text-amber-900">Cash on Delivery</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terms & Place Order -->
+            <div>
+              <div class="flex items-start mb-6">
+                <input type="checkbox" id="terms" required class="h-5 w-5 text-orange-600 focus:ring-orange-500 mt-1">
+                <label for="terms" class="ml-3 text-sm text-amber-700">
+                  I agree to the <a href="#" class="text-orange-600 font-bold hover:underline">Terms of Service</a> and
+                  confirm that I'm at least 18 years old. I understand my order may be subject to delivery fees and
+                  taxes.
+                </label>
+              </div>
+
+              <button id="place-order"
+                class="w-full burger-gradient text-white font-bold py-4 px-6 rounded-xl hover:opacity-95 transition duration-300 text-lg shadow-lg flex items-center justify-center">
+                <i class="fas fa-lock mr-3"></i>
+                <span>Place Order & Pay $62.68</span>
+              </button>
+
+              <p class="text-center text-sm text-amber-700 mt-4">
+                <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                100% Secure Payment • Your data is protected
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Support Card -->
+        <div class="checkout-card">
+          <div class="p-6">
+            <h3 class="font-bold text-amber-900 text-lg mb-4">
+              <i class="fas fa-headset text-orange-500 mr-2"></i>Need Help?
+            </h3>
+            <div class="space-y-4">
+              <div class="flex items-center p-3 bg-amber-50 rounded-xl">
+                <i class="fas fa-phone-alt text-orange-500 text-xl mr-3"></i>
+                <div>
+                  <div class="font-medium text-amber-900">Call Us</div>
+                  <div class="text-amber-700">(555) 123-4567</div>
+                </div>
+              </div>
+              <div class="flex items-center p-3 bg-amber-50 rounded-xl">
+                <i class="fas fa-clock text-orange-500 text-xl mr-3"></i>
+                <div>
+                  <div class="font-medium text-amber-900">Open Hours</div>
+                  <div class="text-amber-700">Mon-Sun: 10AM - 11PM</div>
+                </div>
+              </div>
+              <div class="flex items-center p-3 bg-amber-50 rounded-xl">
+                <i class="fas fa-map-marker-alt text-orange-500 text-xl mr-3"></i>
+                <div>
+                  <div class="font-medium text-amber-900">Restaurant</div>
+                  <div class="text-amber-700">123 Burger Street, NY 10001</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Success Modal -->
+  <div id="success-modal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden">
+      <div class="burger-gradient p-8 text-center">
+        <div
+          class="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6 animate-bounce-slow">
+          <i class="fas fa-hamburger text-white text-5xl"></i>
+        </div>
+        <h2 class="heading-font text-3xl font-bold text-white mb-2">Order Confirmed!</h2>
+        <p class="text-amber-200">Your delicious burgers are being prepared</p>
+      </div>
+
+      <div class="p-8 text-center">
+        <div class="mb-6">
+          <h3 class="font-bold text-amber-900 text-xl mb-2">Order #<span id="confirmed-order-id">BJ8247</span></h3>
+          <p class="text-amber-700">Estimated delivery: <span class="font-bold text-orange-600"
+              id="confirmed-delivery-time">30-45 minutes</span></p>
+        </div>
+
+        <!-- Animated burger progress -->
+        <div class="mb-8">
+          <div class="flex justify-between items-center mb-2">
+            <div class="text-sm text-amber-700">Preparing</div>
+            <div class="text-sm text-amber-700">On the way</div>
+            <div class="text-sm text-amber-700">Delivered</div>
+          </div>
+          <div class="h-2 bg-amber-100 rounded-full overflow-hidden">
+            <div class="h-full w-1/3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"></div>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 rounded-xl p-6 mb-8 burger-border">
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-amber-900 font-bold">Total Paid</span>
+            <span class="text-2xl font-bold text-amber-900">$62.68</span>
+          </div>
+          <div class="text-sm text-amber-700">
+            <p>A confirmation email has been sent to <span class="font-bold" id="confirmed-email">your@email.com</span>
+            </p>
+            <p class="mt-2">We'll notify you when your order is out for delivery!</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <button id="track-order"
+            class="w-full burger-gradient text-white font-bold py-3 px-6 rounded-xl hover:opacity-95 transition duration-300">
+            <i class="fas fa-map-marker-alt mr-2"></i>Track Your Order
+          </button>
+
+          <button id="close-modal"
+            class="w-full bg-white burger-border text-amber-700 font-bold py-3 px-6 rounded-xl hover:bg-amber-50 transition duration-300">
+            Back to Menu
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="fixed inset-0 bg-black/70 z-50 hidden items-center justify-center">
+    <div class="text-center">
+      <div class="burger-loader mx-auto mb-6"></div>
+      <h3 class="text-2xl font-bold text-white mb-2">Preparing Your Order</h3>
+      <p class="text-amber-200">ჩვენი შეფები ზრუნავენ თქვენს გემრიელ წახემსებაზე...</p>
+    </div>
+  </div>
+
+  <!-- Bottom Bun Decoration -->
+  <div class="absolute bottom-0 left-0 right-0 h-20 overflow-hidden z-0">
+    <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-amber-900 to-amber-800 rounded-t-3xl"></div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const placeOrderBtn = document.getElementById('place-order');
+    const successModal = document.getElementById('success-modal');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const backToMenuBtn = document.getElementById('back-to-menu');
+    const closeModalBtn = document.getElementById('close-modal');
+    const trackOrderBtn = document.getElementById('track-order');
+    const promoCodeInput = document.getElementById('promo-code');
+    const applyPromoBtn = document.getElementById('apply-promo');
+    const promoMessage = document.getElementById('promo-message');
+    const addMoreItemsBtn = document.getElementById('add-more-items');
+    const quantityButtons = document.querySelectorAll('.fa-plus, .fa-minus');
+
+    // Order data
+    let orderTotal = 62.68 ₾;
+    let originalTotal = 62.68 ₾;
+
+    // Generate random order ID
+    function generateOrderId() {
+      const prefix = 'BJ';
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      return prefix + randomNum;
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function () {
+      // Set order ID
+      const orderId = generateOrderId();
+      document.getElementById('order-id').textContent = orderId;
+      document.getElementById('confirmed-order-id').textContent = orderId;
+
+      // Set delivery time
+      const now = new Date();
+      const deliveryTime = new Date(now.getTime() + 45 * 60000);
+      const options = { hour: 'numeric', minute: '2-digit', hour12: true };
+      const deliveryTimeString = deliveryTime.toLocaleTimeString('en-US', options);
+      document.getElementById('delivery-time').textContent = `by ${deliveryTimeString}`;
+      document.getElementById('confirmed-delivery-time').textContent = `by ${deliveryTimeString}`;
+
+      // Auto-fill form for demo (optional)
+      // Uncomment the lines below to auto-fill form for testing
+      /*
+      document.getElementById('first-name').value = 'John';
+      document.getElementById('last-name').value = 'BurgerLover';
+      document.getElementById('email').value = 'john@burgerjunction.com';
+      document.getElementById('phone').value = '(555) 123-4567';
+      document.getElementById('street').value = '123 Burger Street';
+      document.getElementById('city').value = 'New York';
+      document.getElementById('state').value = 'NY';
+      document.getElementById('zip').value = '10001';
+      */
+    });
+
+    // Quantity buttons
+    quantityButtons.forEach(button => {
+      button.parentElement.addEventListener('click', function () {
+        const isPlus = this.querySelector('.fa-plus');
+        const quantitySpan = this.parentElement.querySelector('span');
+        let quantity = parseInt(quantitySpan.textContent);
+
+        if (isPlus) {
+          quantity++;
+        } else {
+          if (quantity > 1) quantity--;
+        }
+
+        quantitySpan.textContent = quantity;
+
+        // In a real app, you would recalculate the total here
+        // For this demo, we'll just update the display
+        if (isPlus) {
+          // Simulate price increase
+          orderTotal += 16.99;
+          updateOrderTotal();
+        } else {
+          if (quantity === 1) return; // Don't decrease below 1
+          // Simulate price decrease
+          orderTotal -= 16.99;
+          updateOrderTotal();
+        }
+      });
+    });
+
+    // Update order total display
+    function updateOrderTotal() {
+      const totalElement = document.querySelector('.text-2xl.font-bold.text-orange-600');
+      const buttonTotalElement = document.getElementById('place-order').querySelector('span');
+
+      if (totalElement) {
+        totalElement.textContent = `$${orderTotal.toFixed(2)}`;
+      }
+
+      if (buttonTotalElement) {
+        buttonTotalElement.textContent = `Place Order & Pay $${orderTotal.toFixed(2)}`;
+      }
+    }
+
+    // Promo code application
+    applyPromoBtn.addEventListener('click', function () {
+      const promoCode = promoCodeInput.value.trim().toUpperCase();
+
+      // Valid promo codes
+      const validPromos = {
+        'BURGER10': 10,
+        'JUNCTION15': 15,
+        'SAVE20': 20,
+        'FIRSTORDER': 25,
+        'BURGERTIME': 5
+      };
+
+      if (promoCode === '') {
+        promoMessage.textContent = 'Please enter a promo code';
+        promoMessage.className = 'mt-2 text-sm text-red-600';
+        return;
+      }
+
+      if (validPromos[promoCode]) {
+        const discount = validPromos[promoCode];
+        promoMessage.innerHTML = `<span class="text-green-600 font-bold">✓ Promo code applied! $${discount} off your order</span>`;
+        promoMessage.className = 'mt-2 text-sm text-green-600';
+
+        // Apply discount
+        orderTotal = originalTotal - discount;
+        if (orderTotal < 0) orderTotal = 0;
+        updateOrderTotal();
+
+        // Disable the promo code input
+        promoCodeInput.disabled = true;
+        applyPromoBtn.disabled = true;
+        applyPromoBtn.textContent = 'Applied';
+        applyPromoBtn.classList.remove('hover:bg-amber-800');
+        applyPromoBtn.classList.add('bg-amber-900');
+      } else {
+        promoMessage.textContent = 'Invalid promo code';
+        promoMessage.className = 'mt-2 text-sm text-red-600';
+      }
+    });
+
+    // Place order button
+    placeOrderBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      // Check if terms are accepted
+      const termsCheckbox = document.getElementById('terms');
+      if (!termsCheckbox.checked) {
+        alert('Please accept the terms and conditions to proceed.');
+        termsCheckbox.focus();
+        return;
+      }
+
+      // Basic form validation
+      const requiredFields = [
+        'first-name', 'last-name', 'email', 'phone',
+        'street', 'city', 'state', 'zip'
+      ];
+
+      let isValid = true;
+      requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (!field.value.trim()) {
+          field.classList.add('border-red-500');
+          isValid = false;
+        } else {
+          field.classList.remove('border-red-500');
+        }
+      });
+
+      // Email validation
+      const emailField = document.getElementById('email');
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailField.value)) {
+        emailField.classList.add('border-red-500');
+        isValid = false;
+      }
+
+      if (!isValid) {
+        alert('Please fill in all required fields correctly.');
+        return;
+      }
+
+      // Show loading overlay
+      loadingOverlay.classList.remove('hidden');
+      loadingOverlay.classList.add('flex');
+
+      // Simulate order processing
+      setTimeout(() => {
+        // Hide loading overlay
+        loadingOverlay.classList.add('hidden');
+        loadingOverlay.classList.remove('flex');
+
+        // Update confirmation details
+        const email = document.getElementById('email').value;
+        document.getElementById('confirmed-email').textContent = email;
+
+        // Show success modal
+        successModal.classList.remove('hidden');
+        successModal.classList.add('flex');
+
+        // Scroll to top of modal
+        successModal.scrollIntoView({ behavior: 'smooth' });
+      }, 2000);
+    });
+
+    // Back to menu button
+    backToMenuBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (confirm('Are you sure you want to leave? Your cart will be saved for 30 minutes.')) {
+        // In a real app, this would navigate back to the menu
+        alert('Returning to menu...');
+      }
+    });
+
+    // Add more items button
+    addMoreItemsBtn.addEventListener('click', function () {
+      // In a real app, this would open the menu
+      alert('Opening menu to add more items...');
+    });
+
+    // Modal close buttons
+    closeModalBtn.addEventListener('click', function () {
+      successModal.classList.add('hidden');
+      successModal.classList.remove('flex');
+      // In a real app, this would navigate to the home page
+      alert('Navigating to home page...');
+    });
+
+    trackOrderBtn.addEventListener('click', function () {
+      successModal.classList.add('hidden');
+      successModal.classList.remove('flex');
+      // In a real app, this would navigate to order tracking
+      alert('Opening order tracking page...');
+    });
+
+    // Form field validation on input
+    const formInputs = document.querySelectorAll('input, textarea');
+    formInputs.forEach(input => {
+      input.addEventListener('input', function () {
+        this.classList.remove('border-red-500');
+      });
+    });
+
+    // Enter key for promo code
+    promoCodeInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applyPromoBtn.click();
+      }
+    });
+
+    // Payment method selection styling
+    const paymentOptions = document.querySelectorAll('input[name="payment"]');
+    paymentOptions.forEach(option => {
+      option.addEventListener('change', function () {
+        // Remove selected styling from all options
+        document.querySelectorAll('input[name="payment"]').forEach(opt => {
+          opt.parentElement.parentElement.classList.remove('border-orange-500', 'bg-orange-50');
+          opt.parentElement.parentElement.classList.add('border-amber-200', 'bg-amber-50');
+        });
+
+        // Add selected styling to current option
+        this.parentElement.parentElement.classList.remove('border-amber-200', 'bg-amber-50');
+        this.parentElement.parentElement.classList.add('border-orange-500', 'bg-orange-50');
+      });
+    });
+
+    // Initialize first payment option as selected
+    document.getElementById('credit-card').parentElement.parentElement.classList.add('border-orange-500', 'bg-orange-50');
+  </script>
+</body>
+
+</html>
